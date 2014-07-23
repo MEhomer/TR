@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="neo4j-lucene-index-1.9.8">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/NEO4J/neo4j-community-1.9.8/lib/neo4j-lucene-index-1.9.8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="http://api.neo4j.org/1.9.4/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

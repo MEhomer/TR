@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="geronimo-jta_1.1_spec-1.1.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/NEO4J/neo4j-community-1.9.8/lib/geronimo-jta_1.1_spec-1.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

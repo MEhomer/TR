@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="org.apache.servicemix.bundles.jline-0.9.94_1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/NEO4J/neo4j-community-1.9.8/lib/org.apache.servicemix.bundles.jline-0.9.94_1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

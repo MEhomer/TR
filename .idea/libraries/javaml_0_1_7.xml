@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="javaml-0.1.7">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/javaml-0.1.7.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="http://java-ml.sourceforge.net/api/0.1.7/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

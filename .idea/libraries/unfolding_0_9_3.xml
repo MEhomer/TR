@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="unfolding.0.9.3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/unfolding.0.9.3.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="http://unfoldingmaps.org/javadoc/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
