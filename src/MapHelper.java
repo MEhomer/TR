@@ -1,9 +1,8 @@
 import dbInterface.Workout;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by dimitar on 16.7.14.
@@ -21,6 +20,7 @@ public class MapHelper {
     public static HashMap<Integer, Workout> workout_object_map;
     public static HashMap<String, Long> workout_types_map;
     public static HashMap<Integer, Long> points_map;
+    public static HashSet<Long> points_set;
 
     public static void loadMaps() throws IOException, ClassNotFoundException {
         ObjectInputStream objReader = new ObjectInputStream(new FileInputStream(USERS_MAP_PATH));
@@ -34,5 +34,46 @@ public class MapHelper {
         objReader = new ObjectInputStream(new FileInputStream(WORKOUT_OBJECT_MAP_PATH));
         workout_object_map = (HashMap<Integer, Workout>) objReader.readObject();
         objReader.close();
+    }
+
+    public static void loadMapsRest() throws IOException, ClassNotFoundException {
+        ObjectInputStream objReader;
+
+        objReader = new ObjectInputStream(new FileInputStream(WORKOUT_TYPES_MAP_PATH));
+        workout_types_map = (HashMap<String, Long>) objReader.readObject();
+        objReader.close();
+
+        objReader = new ObjectInputStream(new FileInputStream(POINTS_SET_PATH));
+        points_set = (HashSet<Long>) objReader.readObject();
+        objReader.close();
+    }
+
+    public static void saveMapsRest() throws IOException {
+        ObjectOutputStream objWriter;
+        objWriter = new ObjectOutputStream(new FileOutputStream(WORKOUT_TYPES_MAP_PATH));
+        objWriter.writeObject(workout_types_map);
+        objWriter.close();
+        workout_types_map = null;
+
+        objWriter = new ObjectOutputStream(new FileOutputStream(POINTS_SET_PATH));
+        objWriter.writeObject(points_set);
+        objWriter.close();
+        points_set = null;
+    }
+
+    public static void saveMaps() throws IOException {
+        ObjectOutputStream objWriter;
+
+        objWriter = new ObjectOutputStream(new FileOutputStream(USERS_MAP_PATH));
+        objWriter.writeObject(users_map);
+        objWriter.close();
+
+        objWriter = new ObjectOutputStream(new FileOutputStream(WORKOUTS_MAP_PATH));
+        objWriter.writeObject(workouts_map);
+        objWriter.close();
+
+        objWriter = new ObjectOutputStream(new FileOutputStream(WORKOUT_OBJECT_MAP_PATH));
+        objWriter.writeObject(workout_object_map);
+        objWriter.close();
     }
 }

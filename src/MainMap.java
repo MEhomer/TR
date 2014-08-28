@@ -315,5 +315,11 @@ public class MainMap extends PApplet {
         }
         DBHelper.startDB();
         PApplet.main(new String[]{"MainMap"});
+
+       /* try {
+            MapHelper.saveMaps();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
     }
 }
