@@ -198,11 +198,5 @@ public class DBHelper {
 
         MapHelper.workout_object_map.put(workout_id, new Workout(workout_id, point_list, workout_type, workout_kind));
         log.log(Level.INFO, "New data inserted into db");
-
-        try {
-            MapHelper.saveMapsRest();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

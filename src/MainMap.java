@@ -40,9 +40,6 @@ public class MainMap extends PApplet {
         map = new UnfoldingMap(this, new OpenStreetMap.OpenStreetMapProvider());
         MapUtils.createDefaultEventDispatcher(this, map);
 
-        if (P3D == OPENGL) println("I am run on Processing 2.0");
-        else println("I am run on Processing < 2.0");
-
         c5 = new ControlP5(this);
         userLB = createUserListBox();
         workoutsLB = createWorkouts(new ArrayList<Integer>(MapHelper.workouts_map.keySet()));
@@ -85,6 +82,16 @@ public class MainMap extends PApplet {
         }
     }
 
+    public HashMap<Integer, Integer> zoomLevelMap = new HashMap<Integer, Integer>(){
+        {
+            put(7, 100);
+            put(8, 40);
+            put(9, 30);
+            put(10, 22);
+            put(11, 18);
+        }
+    };
+
     public LinkedList<LinkedList<Location>> linesWorkouts(int level, Location start, Location end){
         LinkedList<LinkedList<Location>> linesWorkouts = new LinkedList<LinkedList<Location>>();
 
@@ -93,18 +100,10 @@ public class MainMap extends PApplet {
         }
 
         int jump = 0;
-        if (level == 7) {
-            jump = 100;
-        } else if (level == 8) {
-            jump = 40;
-        } else if (level == 9) {
-            jump = 30;
-        } else if (level == 10) {
-            jump = 22;
-        } else if (level == 11) {
-            jump = 18;
+        if (zoomLevelMap.containsKey(level)){
+            jump = zoomLevelMap.get(level);
         } else {
-            jump = 14;
+            jump = 18;
         }
 
         String zoomLevel = null;
