@@ -6,6 +6,7 @@ import dbInterface.Workout;
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.SimpleLinesMarker;
+import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.OpenStreetMap;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import processing.core.PApplet;
@@ -78,17 +79,18 @@ public class MainMap extends PApplet {
         Iterator<LinkedList<Location>> locationsIterator = linesWorkouts.iterator();
 
         while(locationsIterator.hasNext()){
-            map.addMarker(new SimpleLinesMarker(locationsIterator.next()));
+            LinesMarker m = new LinesMarker(locationsIterator.next());
+            map.addMarker(m);
         }
     }
 
     public HashMap<Integer, Integer> zoomLevelMap = new HashMap<Integer, Integer>(){
         {
             put(7, 100);
-            put(8, 40);
-            put(9, 30);
-            put(10, 22);
-            put(11, 18);
+            put(8, 90);
+            put(9, 80);
+            put(10, 70);
+            put(11, 60);
         }
     };
 
@@ -103,7 +105,7 @@ public class MainMap extends PApplet {
         if (zoomLevelMap.containsKey(level)){
             jump = zoomLevelMap.get(level);
         } else {
-            jump = 18;
+            jump = 60;
         }
 
         String zoomLevel = null;
