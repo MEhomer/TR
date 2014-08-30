@@ -1,3 +1,4 @@
+import dbInterface.Point;
 import dbInterface.Workout;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
@@ -25,10 +26,30 @@ public class TestClass {
     public static HashMap<Integer, Long> points_map;
 
     public static void main(String [] args) throws IOException, ClassNotFoundException {
-        loadMaps();
+        /*loadMaps();
         DBHelper.startDB();
         buildWorkoutMap();
-        DBHelper.stopDB();
+        DBHelper.stopDB();*/
+        MapHelper.loadMaps();
+        Iterator<Integer> walkerIDS = MapHelper.workout_object_map.keySet().iterator();
+        double max = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
+        while(walkerIDS.hasNext()){
+            Workout workout = MapHelper.workout_object_map.get(walkerIDS.next());
+            Iterator<Point> walkerP = workout.getPoints().iterator();
+            while(walkerP.hasNext()){
+                Point p = walkerP.next();
+                if (p.getAlt() > max){
+                    max = p.getAlt();
+                }
+                if (p.getAlt() < min){
+                    min = p.getAlt();
+                }
+            }
+        }
+
+        System.out.println(max);
+        System.out.println(min);
     }
 
     public static void startDB(){

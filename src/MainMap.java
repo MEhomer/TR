@@ -5,6 +5,7 @@ import dbInterface.User;
 import dbInterface.Workout;
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.geo.Location;
+import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.SimpleLinesMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.OpenStreetMap;
@@ -75,12 +76,26 @@ public class MainMap extends PApplet {
 
         map.getMarkers().clear();
 
-        LinkedList<LinkedList<Location>> linesWorkouts = linesWorkouts(map.getZoomLevel(), locationStart, locationEnd);
-        Iterator<LinkedList<Location>> locationsIterator = linesWorkouts.iterator();
+        /*LinkedList<LinkedList<Location>> linesWorkouts =*/ linesWorkouts(map.getZoomLevel(), locationStart, locationEnd);
+        //Iterator<LinkedList<Location>> locationsIterator = linesWorkouts.iterator();
 
-        while(locationsIterator.hasNext()){
+        /*while(locationsIterator.hasNext()){
             LinesMarker m = new LinesMarker(locationsIterator.next());
             map.addMarker(m);
+        }*/
+    }
+
+    public void mouseMoved() {
+        Marker hitMarker = map.getFirstHitMarker(mouseX, mouseY);
+        if (hitMarker != null) {
+            // Select current marker
+            hitMarker.setSelected(true);
+            hitMarker.setColor(color(0, 0, 0));
+        } else {
+            // Deselect all other markers
+            for (Marker marker : map.getMarkers()) {
+                marker.setSelected(false);
+            }
         }
     }
 
@@ -90,22 +105,22 @@ public class MainMap extends PApplet {
             put(8, 90);
             put(9, 80);
             put(10, 70);
-            put(11, 60);
+            put(11, 2);
         }
     };
 
-    public LinkedList<LinkedList<Location>> linesWorkouts(int level, Location start, Location end){
+    public void linesWorkouts(int level, Location start, Location end){
         LinkedList<LinkedList<Location>> linesWorkouts = new LinkedList<LinkedList<Location>>();
 
         if (level < 7) {
-            return linesWorkouts;
+            return;
         }
 
         int jump = 0;
         if (zoomLevelMap.containsKey(level)){
             jump = zoomLevelMap.get(level);
         } else {
-            jump = 60;
+            jump = 2;
         }
 
         String zoomLevel = null;
@@ -137,11 +152,13 @@ public class MainMap extends PApplet {
                     jumpLevel = jump;
                 }
             }
-            linesWorkouts.add(locations);
+            LinesMarker m = new LinesMarker(locations, ID);
+            map.addMarker(m);
+            //linesWorkouts.add(locations);
         }
 
 
-        return linesWorkouts;
+        //return linesWorkouts;
     }
 
     public void controlEvent(ControlEvent theEvent) {
