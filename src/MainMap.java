@@ -7,12 +7,15 @@ import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.SimpleLinesMarker;
+import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.OpenStreetMap;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import processing.core.PApplet;
 
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 
@@ -57,6 +60,8 @@ public class MainMap extends PApplet {
         background(255);
         map.draw();
 
+        info_box(workout_type, length, averageAlt);
+
         if (changed == true) {
             if (displayUser != null) {
                 LinkedList<Integer> workoutIDS = new LinkedList<Integer>();
@@ -85,18 +90,27 @@ public class MainMap extends PApplet {
         }*/
     }
 
-    public void mouseMoved() {
-        Marker hitMarker = map.getFirstHitMarker(mouseX, mouseY);
-        if (hitMarker != null) {
-            // Select current marker
-            hitMarker.setSelected(true);
-            hitMarker.setColor(color(0, 0, 0));
-        } else {
-            // Deselect all other markers
-            for (Marker marker : map.getMarkers()) {
-                marker.setSelected(false);
-            }
-        }
+    public String workout_type = null;
+    public double length = 0.0;
+    public double averageAlt = 0.0;
+
+    public void info_box(String workout_type, double length, double averageAlt){
+        pushStyle();
+        fill(color(0, 110, 235, 200));
+        rect(130, 5, 180, 70, 5, 5, 5, 5);
+        fill(color(0, 0, 0));
+        DecimalFormat df = new DecimalFormat("0.00");
+        text("Workout type:", 140, 20);
+        if (workout_type != null)
+            text(workout_type, 260, 20);
+        text("Length: ", 140, 40);
+        if (workout_type != null)
+            text(Double.toString(Double.parseDouble(df.format(length))), 260, 40);
+        text("Average altitude:", 140, 60);
+        if (workout_type != null)
+            text(Double.toString(Double.parseDouble(df.format(averageAlt))), 260, 60);
+
+        popStyle();
     }
 
     public HashMap<Integer, Integer> zoomLevelMap = new HashMap<Integer, Integer>(){
@@ -152,11 +166,12 @@ public class MainMap extends PApplet {
                     jumpLevel = jump;
                 }
             }
+            //LinesMarker m = new LinesMarker(locations, ID);
             LinesMarker m = new LinesMarker(locations, ID);
+            m.setStrokeWeight(5);
             map.addMarker(m);
             //linesWorkouts.add(locations);
-        }
-
+        };
 
         //return linesWorkouts;
     }
@@ -197,6 +212,11 @@ public class MainMap extends PApplet {
             Workout tempWorkout = MapHelper.workout_object_map.get(value);
             double lat = tempWorkout.getPoints().get(0).getLat();
             double lng = tempWorkout.getPoints().get(0).getLng();
+
+            workout_type = tempWorkout.getWorkoutType().getName();
+            length = calculateLength(tempWorkout);
+            averageAlt = averageAlt(tempWorkout);
+
             map.zoomAndPanTo(new Location(lat, lng), 14);
         } else if (theEvent.getController().getName().equals("From")){
             int value = (int) theEvent.getController().getValue();
@@ -339,5 +359,34 @@ public class MainMap extends PApplet {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
+    }
+
+    public double calculateLength(Workout w){
+        Iterator<Point> walkerP = w.getPoints().iterator();
+
+        double length = 0.0;
+        Point start = null;
+        Point end = null;
+        if (walkerP.hasNext()){
+            start = walkerP.next();
+        }
+
+        while(walkerP.hasNext()){
+            end = walkerP.next();
+
+            length += dist((float)start.getLat(),(float) start.getLng(),(float) end.getLat(),(float) end.getLng());
+        }
+
+        return length;
+    }
+
+    public double averageAlt(Workout w){
+        double alt = 0.0;
+        Iterator<Point> walkerP = w.getPoints().iterator();
+        while(walkerP.hasNext()){
+            alt += walkerP.next().getAlt();
+        }
+
+        return alt/w.getPoints().size();
     }
 }

@@ -25,9 +25,9 @@ public class LinesMarker extends SimpleLinesMarker {
     public void draw(PGraphics pg, List<MapPosition> mapPositions){
         pg.pushStyle();
 
-        pg.strokeWeight(1);
+        pg.strokeWeight(2);
         pg.noFill();
-        pg.beginShape(pg.LINE);
+        pg.beginShape(pg.LINES);
         Iterator<MapPosition> walkerMP = mapPositions.iterator();
         Iterator<Point> walkerP = MapHelper.workout_object_map.get(this.id).getPoints().iterator();
         MapPosition start = null;
@@ -43,6 +43,7 @@ public class LinesMarker extends SimpleLinesMarker {
             if (averageAlt > SECOND_MAX) averageAlt = SECOND_MAX;
             int yellow = (int) (255 - (averageAlt / SECOND_MAX) * 255);
             if (isSelected()){
+                this.setSelected(true);
                 pg.stroke(0, 0, 0);
             } else {
                 pg.stroke(255, yellow, 0);
