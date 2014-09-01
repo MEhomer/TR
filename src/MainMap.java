@@ -40,9 +40,9 @@ public class MainMap extends PApplet {
 
     @Override
     public void setup() {
-        size(900, 500, GLConstants.GLGRAPHICS);
+        size(1140, 500, GLConstants.GLGRAPHICS);
 
-        map = new UnfoldingMap(this, new OpenStreetMap.OpenStreetMapProvider());
+        map = new UnfoldingMap(this, 122.5f, 0f, 895f, 500f, new OpenStreetMap.OpenStreetMapProvider());
         MapUtils.createDefaultEventDispatcher(this, map);
 
         c5 = new ControlP5(this);
@@ -57,7 +57,7 @@ public class MainMap extends PApplet {
 
     @Override
     public void draw() {
-        background(255);
+        background(0);
         map.draw();
 
         info_box(workout_type, length, averageAlt);
@@ -81,7 +81,8 @@ public class MainMap extends PApplet {
 
         map.getMarkers().clear();
 
-        /*LinkedList<LinkedList<Location>> linesWorkouts =*/ linesWorkouts(map.getZoomLevel(), locationStart, locationEnd);
+        /*LinkedList<LinkedList<Location>> linesWorkouts =*/
+        linesWorkouts(map.getZoomLevel(), locationStart, locationEnd);
         //Iterator<LinkedList<Location>> locationsIterator = linesWorkouts.iterator();
 
         /*while(locationsIterator.hasNext()){
@@ -93,22 +94,26 @@ public class MainMap extends PApplet {
     public String workout_type = null;
     public double length = 0.0;
     public double averageAlt = 0.0;
+    public int selectedID = 0;
 
     public void info_box(String workout_type, double length, double averageAlt){
         pushStyle();
         fill(color(0, 110, 235, 200));
-        rect(130, 5, 180, 70, 5, 5, 5, 5);
+        rect(130, 5, 190, 85, 5, 5, 5, 5);
         fill(color(0, 0, 0));
         DecimalFormat df = new DecimalFormat("0.00");
-        text("Workout type:", 140, 20);
+        text("Workout: ", 140, 20);
         if (workout_type != null)
-            text(workout_type, 260, 20);
-        text("Length: ", 140, 40);
+            text(selectedID, 260, 20);
+        text("Workout type:", 140, 40);
         if (workout_type != null)
-            text(Double.toString(Double.parseDouble(df.format(length))), 260, 40);
-        text("Average altitude:", 140, 60);
+            text(workout_type, 260, 40);
+        text("Length: ", 140, 60);
         if (workout_type != null)
-            text(Double.toString(Double.parseDouble(df.format(averageAlt))), 260, 60);
+            text(Double.toString(Double.parseDouble(df.format(length))), 260, 60);
+        text("Average altitude:", 140, 80);
+        if (workout_type != null)
+            text(Double.toString(Double.parseDouble(df.format(averageAlt))), 260, 80);
 
         popStyle();
     }
@@ -149,6 +154,7 @@ public class MainMap extends PApplet {
 
         Iterator<Integer> walkerID = workoutIDS.iterator();
 
+        LinkedList<LinesMarker> lMarkers = new LinkedList<LinesMarker>();
         while (walkerID.hasNext()) {
             int ID = walkerID.next();
             Workout workoutTemp = MapHelper.workout_object_map.get(ID);
@@ -168,10 +174,25 @@ public class MainMap extends PApplet {
             }
             //LinesMarker m = new LinesMarker(locations, ID);
             LinesMarker m = new LinesMarker(locations, ID);
-            m.setStrokeWeight(5);
-            map.addMarker(m);
+            if (workout_type != null){
+                if (m.getID() == selectedID){
+                    m.setSelected(true);
+                    lMarkers.addLast(m);
+                } else {
+                    m.setSelected(false);
+                    lMarkers.addFirst(m);
+                }
+            } else {
+                m.setSelected(false);
+                lMarkers.addFirst(m);
+            }
             //linesWorkouts.add(locations);
-        };
+        }
+
+        Iterator<LinesMarker> walkerLM = lMarkers.iterator();
+        while(walkerLM.hasNext()){
+            map.addMarker(walkerLM.next());
+        }
 
         //return linesWorkouts;
     }
@@ -216,6 +237,7 @@ public class MainMap extends PApplet {
             workout_type = tempWorkout.getWorkoutType().getName();
             length = calculateLength(tempWorkout);
             averageAlt = averageAlt(tempWorkout);
+            selectedID = value;
 
             map.zoomAndPanTo(new Location(lat, lng), 14);
         } else if (theEvent.getController().getName().equals("From")){

@@ -12,9 +12,10 @@ import java.util.List;
  */
 public class LinesMarker extends SimpleLinesMarker {
     private int id;
+    private boolean selected = false;
 
     private static double MAX = 29700.0;
-    private static double SECOND_MAX = 5000.0;
+    private static double SECOND_MAX = 2500.0;
     private static double MIN = 0.0;
 
     public LinesMarker(List<Location> locationList, int id){
@@ -22,10 +23,18 @@ public class LinesMarker extends SimpleLinesMarker {
         this.id = id;
     }
 
+    public int getID(){
+        return id;
+    }
+
+    public void setSelected(boolean value){
+        selected = value;
+    }
+
     public void draw(PGraphics pg, List<MapPosition> mapPositions){
         pg.pushStyle();
 
-        pg.strokeWeight(2);
+        pg.strokeWeight(5);
         pg.noFill();
         pg.beginShape(pg.LINES);
         Iterator<MapPosition> walkerMP = mapPositions.iterator();
@@ -42,11 +51,13 @@ public class LinesMarker extends SimpleLinesMarker {
             double averageAlt = Math.abs((endP.getAlt() + startP.getAlt())/2);
             if (averageAlt > SECOND_MAX) averageAlt = SECOND_MAX;
             int yellow = (int) (255 - (averageAlt / SECOND_MAX) * 255);
-            if (isSelected()){
-                this.setSelected(true);
-                pg.stroke(0, 0, 0);
-            } else {
-                pg.stroke(255, yellow, 0);
+            if (this.selected) {
+                pg.stroke(0, yellow, 255);
+                pg.strokeWeight(6);
+            }
+            else {
+                pg.stroke(255, yellow, 0, 150);
+                pg.strokeWeight(4);
             }
             pg.vertex(start.x, start.y);
             pg.vertex(end.x, end.y);
