@@ -383,6 +383,26 @@ public class MainMap extends PApplet {
         }*/
     }
 
+
+    //Haversine formula for distance
+    public static double distance(Point first, Point second){
+        double R = 6371;
+        double latR1 = Math.toRadians(first.getLat());
+        double latR2 = Math.toRadians(second.getLat());
+        double difLatR = Math.toRadians(second.getLat() - first.getLat());
+        double difLngR = Math.toRadians(second.getLng() - first.getLng());
+
+        double a = Math.sin(difLatR/2) * Math.sin(difLatR/2)
+                 + Math.cos(latR1) * Math.cos(latR2)
+                 * Math.sin(difLngR/2) * Math.sin(difLngR/2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        double d = R * c;
+
+        return d;
+     }
+
     public double calculateLength(Workout w){
         Iterator<Point> walkerP = w.getPoints().iterator();
 
@@ -396,7 +416,8 @@ public class MainMap extends PApplet {
         while(walkerP.hasNext()){
             end = walkerP.next();
 
-            length += dist((float)start.getLat(),(float) start.getLng(),(float) end.getLat(),(float) end.getLng());
+            length += distance(start, end);
+            start = end;
         }
 
         return length;
