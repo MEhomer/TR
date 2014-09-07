@@ -94,12 +94,13 @@ public class MainMap extends PApplet {
     public String workout_type = null;
     public double length = 0.0;
     public double averageAlt = 0.0;
+    public double averageSpeed = 0.0;
     public int selectedID = 0;
 
     public void info_box(String workout_type, double length, double averageAlt){
         pushStyle();
         fill(color(0, 110, 235, 200));
-        rect(130, 5, 190, 85, 5, 5, 5, 5);
+        rect(130, 5, 203, 105, 5, 5, 5, 5);
         fill(color(0, 0, 0));
         DecimalFormat df = new DecimalFormat("0.00");
         text("Workout: ", 140, 20);
@@ -110,10 +111,13 @@ public class MainMap extends PApplet {
             text(workout_type, 260, 40);
         text("Length: ", 140, 60);
         if (workout_type != null)
-            text(Double.toString(Double.parseDouble(df.format(length))), 260, 60);
+            text(Double.toString(Double.parseDouble(df.format(length))) + " km", 260, 60);
         text("Average altitude:", 140, 80);
         if (workout_type != null)
             text(Double.toString(Double.parseDouble(df.format(averageAlt))), 260, 80);
+        text("Average speed:", 140, 100);
+        if (workout_type != null)
+            text(Double.toString(Double.parseDouble(df.format(averageSpeed))) + " km/h", 260, 100);
 
         popStyle();
     }
@@ -155,6 +159,7 @@ public class MainMap extends PApplet {
         Iterator<Integer> walkerID = workoutIDS.iterator();
 
         LinkedList<LinesMarker> lMarkers = new LinkedList<LinesMarker>();
+        LinesMarker selected = null;
         while (walkerID.hasNext()) {
             int ID = walkerID.next();
             Workout workoutTemp = MapHelper.workout_object_map.get(ID);
@@ -177,6 +182,7 @@ public class MainMap extends PApplet {
             if (workout_type != null){
                 if (m.getID() == selectedID){
                     m.setSelected(true);
+                    selected = m;
                     lMarkers.addLast(m);
                 } else {
                     m.setSelected(false);
@@ -192,6 +198,11 @@ public class MainMap extends PApplet {
         Iterator<LinesMarker> walkerLM = lMarkers.iterator();
         while(walkerLM.hasNext()){
             map.addMarker(walkerLM.next());
+        }
+
+        if (selected != null) {
+            map.addMarker(selected.startPoint);
+            map.addMarker(selected.endPoint);
         }
 
         //return linesWorkouts;
@@ -237,6 +248,7 @@ public class MainMap extends PApplet {
             workout_type = tempWorkout.getWorkoutType().getName();
             length = calculateLength(tempWorkout);
             averageAlt = averageAlt(tempWorkout);
+            averageSpeed = fromMPSToKMPS(averageSpeed(tempWorkout));
             selectedID = value;
 
             map.zoomAndPanTo(new Location(lat, lng), 14);
@@ -381,6 +393,11 @@ public class MainMap extends PApplet {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
+
+       /* Point A = new Point(40.267443f, 29.069824f, 0.0f, 0);
+        Point B = new Point(40.198003f, 29.348602f, 0.0f, 0);
+        System.out.println(distance(A, B));
+        System.out.println((distance(B, A)*1000)/(2));*/
     }
 
 
@@ -431,5 +448,21 @@ public class MainMap extends PApplet {
         }
 
         return alt/w.getPoints().size();
+    }
+
+    public double fromMPSToKMPS(double mps){
+        return (mps * 3600) / 1000;
+    }
+    public double averageSpeed(Workout w){
+        if (w.getPoints().size() > 0){
+            Point start = w.getPoints().get(0);
+            Point end = w.getPoints().get(w.getPoints().size() - 1);
+            double miliseconds = new Date((long) end.getTs()).getTime() - new Date((long) start.getTs()).getTime();
+            double length = calculateLength(w);
+            double averageSpeed = (length * 1000) / (miliseconds / 1000);
+            return averageSpeed;
+        }
+
+        return 0.0f;
     }
 }

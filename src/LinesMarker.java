@@ -5,6 +5,7 @@ import de.fhpotsdam.unfolding.utils.MapPosition;
 import processing.core.PGraphics;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,8 +19,13 @@ public class LinesMarker extends SimpleLinesMarker {
     private static double SECOND_MAX = 2500.0;
     private static double MIN = 0.0;
 
-    public LinesMarker(List<Location> locationList, int id){
+    public PointMarker startPoint;
+    public PointMarker endPoint;
+
+    public LinesMarker(LinkedList<Location> locationList, int id){
         super(locationList);
+        startPoint = new PointMarker(locationList.getFirst(), true);
+        endPoint = new PointMarker(locationList.getLast(), false);
         this.id = id;
     }
 
