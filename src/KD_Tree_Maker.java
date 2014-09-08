@@ -63,7 +63,6 @@ public class KD_Tree_Maker {
                 count++;
             }
         }
-
     }
 
     public static HashMap<String, KDTree> userTree;

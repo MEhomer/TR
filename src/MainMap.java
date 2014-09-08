@@ -96,11 +96,12 @@ public class MainMap extends PApplet {
     public double averageAlt = 0.0;
     public double averageSpeed = 0.0;
     public int selectedID = 0;
+    public double timeLength = 0;
 
     public void info_box(String workout_type, double length, double averageAlt){
         pushStyle();
         fill(color(0, 110, 235, 200));
-        rect(130, 5, 203, 105, 5, 5, 5, 5);
+        rect(130, 5, 210, 125, 5, 5, 5, 5);
         fill(color(0, 0, 0));
         DecimalFormat df = new DecimalFormat("0.00");
         text("Workout: ", 140, 20);
@@ -114,10 +115,13 @@ public class MainMap extends PApplet {
             text(Double.toString(Double.parseDouble(df.format(length))) + " km", 260, 60);
         text("Average altitude:", 140, 80);
         if (workout_type != null)
-            text(Double.toString(Double.parseDouble(df.format(averageAlt))), 260, 80);
+            text(Double.toString(Double.parseDouble(df.format(averageAlt))) + " m", 260, 80);
         text("Average speed:", 140, 100);
         if (workout_type != null)
             text(Double.toString(Double.parseDouble(df.format(averageSpeed))) + " km/h", 260, 100);
+        text("Time:", 140, 120);
+        if (workout_type != null)
+            text(Double.toString(Double.parseDouble(df.format(timeLength))) + " sec", 260, 120);
 
         popStyle();
     }
@@ -250,6 +254,7 @@ public class MainMap extends PApplet {
             averageAlt = averageAlt(tempWorkout);
             averageSpeed = fromMPSToKMPS(averageSpeed(tempWorkout));
             selectedID = value;
+            timeLength = timeLength(tempWorkout) / 1000;
 
             map.zoomAndPanTo(new Location(lat, lng), 14);
         } else if (theEvent.getController().getName().equals("From")){
@@ -329,7 +334,7 @@ public class MainMap extends PApplet {
         lbAll.setColorLabel(color(20, 20, 20));
         while (uidWalker.hasNext()) {
             int id = uidWalker.next();
-            ListBoxItem lbi = userLB.addItem("User id: "+id,(int)id);
+            ListBoxItem lbi = userLB.addItem("User: "+id,(int)id);
             lbi.setColorBackground(color(0, 150, 190, 200));
             lbi.setColorLabel(color(20, 20, 20));
         }
@@ -362,7 +367,7 @@ public class MainMap extends PApplet {
             Date date = new Date((long)tempWorkout.getPoints().get(0).getTs());
             int hour = date.getHours();
             if (hour < fromHourValue || hour > toHourValue){ continue; }
-            ListBoxItem lbi = workoutsLB.addItem("Workout id: "+id,(int)id);
+            ListBoxItem lbi = workoutsLB.addItem("Workout: "+id,(int)id);
             lbi.setColorBackground(color(0, 150, 190, 200));
             lbi.setColorLabel(color(20, 20, 20));
         }
@@ -464,5 +469,18 @@ public class MainMap extends PApplet {
         }
 
         return 0.0f;
+    }
+
+    public double timeLength(Workout w){
+        if (w.getPoints().size() > 0) {
+            Point first = w.getPoints().get(0);
+            Point last = w.getPoints().get(w.getPoints().size() - 1);
+
+            double time = new Date((long) last.getTs()).getTime() - new Date((long) first.getTs()).getTime();
+
+            return time;
+        }
+
+        return 0;
     }
 }
